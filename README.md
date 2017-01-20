@@ -44,38 +44,50 @@ Object Geocoding
 
 Your model must have two attributes (database columns) for storing latitude and longitude coordinates. By default they should be called `latitude` and `longitude` but this can be changed (see "Model Configuration" below):
 
-    rails generate migration AddLatitudeAndLongitudeToModel latitude:float longitude:float
-    rake db:migrate
+```
+rails generate migration AddLatitudeAndLongitudeToModel latitude:float longitude:float
+rake db:migrate
+```
 
 For geocoding, your model must provide a method that returns an address. This can be a single attribute, but it can also be a method that returns a string assembled from different attributes (eg: `city`, `state`, and `country`).
 
 Next, your model must tell Geocoder which method returns your object's geocodable address:
 
-    geocoded_by :full_street_address   # can also be an IP address
-    after_validation :geocode          # auto-fetch coordinates
+```ruby
+geocoded_by :full_street_address   # can also be an IP address
+after_validation :geocode          # auto-fetch coordinates
+```
 
 For reverse geocoding, tell Geocoder which attributes store latitude and longitude:
 
-    reverse_geocoded_by :latitude, :longitude
-    after_validation :reverse_geocode  # auto-fetch address
+```ruby
+reverse_geocoded_by :latitude, :longitude
+after_validation :reverse_geocode  # auto-fetch address
+```
 
 ### Mongoid
 
 First, your model must have an array field for storing coordinates:
 
-    field :coordinates, :type => Array
+```ruby
+field :coordinates, :type => Array
+```
 
 You may also want an address field, like this:
 
-    field :address
+```ruby
+field :address
+```
 
 but if you store address components (city, state, country, etc) in separate fields you can instead define a method called `address` that combines them into a single string which will be used to query the geocoding service.
 
 Once your fields are defined, include the `Geocoder::Model::Mongoid` module and then call `geocoded_by`:
 
-    include Geocoder::Model::Mongoid
-    geocoded_by :address               # can also be an IP address
-    after_validation :geocode          # auto-fetch coordinates
+```ruby
+include Geocoder::Model::Mongoid
+geocoded_by :address               # can also be an IP address
+after_validation :geocode          # auto-fetch coordinates
+```
 
 Reverse geocoding is similar:
 
